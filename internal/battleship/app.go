@@ -20,6 +20,6 @@ func Create() *cli.App {
 }
 
 func Execute(c *cli.Context) error {
-    fmt.Println("Hello, World!")
+    fmt.Println(NewBoard())
     return nil
 }
