@@ -19,14 +19,18 @@ build: ## Build the project
 	@echo "Building project ..."
 	mkdir -p $(BIN_DIR)
 	go build -o $(BIN_DIR)/battleship $(PROJECT_DIR)/cmd/battleship/main.go
+	go build -o $(BIN_DIR)/server $(PROJECT_DIR)/cmd/server/main.go
 
 	@echo "Done!"
 	@echo "Final binary is located in $(BIN_DIR)"
 
-.PHONY: run
-run: ## Run the project's scanner binary.
-	@echo "Running project ..."
-	go run $(PROJECT_DIR)/cmd/battleship/main.go
+.PHONY: run-battleship
+run-battleship: ## Run the project's scanner binary.
+	go run $(PROJECT_DIR)/cmd/battleship/main.go.
+
+PHONY: run-server
+run-server: ## Run the project's scanner binary.
+	go run $(PROJECT_DIR)/cmd/server/main.go
 
 .PHONY: test
 test: build ## Run the unit tests.
