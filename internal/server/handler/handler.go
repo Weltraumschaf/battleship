@@ -7,7 +7,6 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strconv"
-	"weltraumschaf.de/battleship/internal/server/model"
 	"weltraumschaf.de/battleship/internal/server/service"
 )
 
@@ -21,11 +20,6 @@ func NewArticleHandler() *ArticleHandler {
 	}
 }
 
-var articles []model.Article = []model.Article{
-	{Id: 1, Title: "Hello", Description: "Article Description", Content: "Article Content"},
-	{Id: 2, Title: "Hello 2", Description: "Article Description", Content: "Article Content"},
-}
-
 func (h *ArticleHandler) HomePage(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "Welcome to the HomePage!")
 	fmt.Println("Endpoint Hit: homePage")
@@ -33,36 +27,24 @@ func (h *ArticleHandler) HomePage(w http.ResponseWriter, r *http.Request) {
 
 func (h *ArticleHandler) ReturnAllArticles(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Endpoint Hit: returnAllArticles")
-	json.NewEncoder(w).Encode(articles)
+	json.NewEncoder(w).Encode(h.articles.ReturnAllArticles())
 }
 
 func (h *ArticleHandler) ReturnSingleArticle(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, _ := strconv.Atoi(vars["id"])
 
-	for _, article := range articles {
-		if article.Id == id {
-			json.NewEncoder(w).Encode(article)
-			break
-		}
-	}
+	json.NewEncoder(w).Encode(h.articles.ReturnSingleArticle(id))
 }
 
 func (h *ArticleHandler) CreateNewArticle(w http.ResponseWriter, r *http.Request) {
 	reqBody, _ := ioutil.ReadAll(r.Body)
-	var article model.Article
-	json.Unmarshal(reqBody, &article)
-	articles = append(articles, article)
-	json.NewEncoder(w).Encode(article)
+	json.NewEncoder(w).Encode(h.articles.CreateNewArticle(reqBody))
 }
 
 func (h *ArticleHandler) DeleteArticle(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	id, _ := strconv.Atoi(vars["id"])
 
-	for index, article := range articles {
-		if article.Id == id {
-			articles = append(articles[:index], articles[index+1:]...)
-		}
-	}
+	json.NewEncoder(w).Encode(h.articles.DeleteArticle(id))
 }
