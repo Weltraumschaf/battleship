@@ -3,10 +3,10 @@ package handler
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/gorilla/mux"
 	"io/ioutil"
 	"net/http"
-	"strconv"
+	"github.com/google/uuid"
+	"github.com/gorilla/mux"
 	"weltraumschaf.de/battleship/internal/server/service"
 )
 
@@ -32,7 +32,18 @@ func (h *ArticleHandler) ReturnAllArticles(w http.ResponseWriter, r *http.Reques
 
 func (h *ArticleHandler) ReturnSingleArticle(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	id, _ := strconv.Atoi(vars["id"])
+	literalId, ok := vars["id"]
+
+	if !ok {
+		http.Error(w, "Path parameter 'id' missing!", http.StatusBadRequest)
+		return
+	}
+
+	id, err := uuid.Parse(literalId)
+	if err != nil {
+		http.Error(w, "Malformed parameter 'id'!", http.StatusBadRequest)
+		return
+	}
 
 	json.NewEncoder(w).Encode(h.articles.ReturnSingleArticle(id))
 }
@@ -44,7 +55,18 @@ func (h *ArticleHandler) CreateNewArticle(w http.ResponseWriter, r *http.Request
 
 func (h *ArticleHandler) DeleteArticle(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
-	id, _ := strconv.Atoi(vars["id"])
+	literalId, ok := vars["id"]
+
+	if !ok {
+		http.Error(w, "Get parameter 'id' missing!", http.StatusBadRequest)
+		return
+	}
+
+	id, err := uuid.Parse(literalId)
+	if err != nil {
+		http.Error(w, "Malformed parameter 'id'!", http.StatusBadRequest)
+		return
+	}
 
 	json.NewEncoder(w).Encode(h.articles.DeleteArticle(id))
 }
