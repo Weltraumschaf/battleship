@@ -38,7 +38,13 @@ func (h *ArticleHandler) SingleArticle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	json.NewEncoder(w).Encode(h.articles.ReturnSingleArticle(id))
+	article, exists := h.articles.ReturnSingleArticle(id)
+
+	if !exists {
+		http.Error(w, "Not found", http.StatusNotFound)
+	}
+
+	json.NewEncoder(w).Encode(article)
 }
 
 func (h *ArticleHandler) CreateArticle(w http.ResponseWriter, r *http.Request) {

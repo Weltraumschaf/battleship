@@ -2,64 +2,39 @@ package service
 
 import (
 	"encoding/json"
+	"weltraumschaf.de/battleship/internal/server/repo"
 
 	"github.com/google/uuid"
 	"weltraumschaf.de/battleship/internal/server/model"
 )
 
 type ArticleService struct {
-	data []model.Article
+	data *repo.ArticleRepo
 }
 
 func NewArticleService() *ArticleService {
 	return &ArticleService{
-		data: []model.Article{
-			{
-				Id: uuid.Must(uuid.NewRandom()),
-				Title: "Hello",
-				Description: "Article Description",
-				Content: "Article Content",
-			},
-			{
-				Id: uuid.Must(uuid.NewRandom()),
-				Title: "Hello 2",
-				Description: "Article Description",
-				Content: "Article Content",
-			},
-		},
+		data: repo.NewArticleRepo(),
 	}
 }
 
 func (as *ArticleService) ReturnAllArticles() []model.Article {
-	return as.data
+	return as.data.FindAll()
 }
 
-func (as *ArticleService) ReturnSingleArticle(id uuid.UUID) model.Article {
-	for _, article := range as.data {
-		if article.Id == id {
-			return article
-		}
-	}
-
-	return model.Article{}
+func (as *ArticleService) ReturnSingleArticle(id uuid.UUID) (model.Article, bool) {
+	return as.data.FindById(id)
 }
 
 func (as *ArticleService) CreateNewArticle(body []byte) model.Article {
 	var article model.Article
 	json.Unmarshal(body, &article)
-	article.Id = uuid.New()
-	as.data = append(as.data, article)
+	article.Id = uuid.Must(uuid.NewRandom())
+	as.data.Save(article)
 
 	return article
 }
 
 func (as *ArticleService) DeleteArticle(id uuid.UUID) model.Article {
-	for index, article := range as.data {
-		if article.Id == id {
-			as.data = append(as.data[:index], as.data[index + 1])
-			return article
-		}
-	}
-
-	return model.Article{}
+	return as.data.Delete(id)
 }
