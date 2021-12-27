@@ -21,15 +21,9 @@ func NewArticleRepo() *ArticleRepo {
 	return r
 }
 
-func (r *ArticleRepo) Save(entity model.Article) model.Article {
-	nullId := uuid.UUID{}
-
-	if entity.Id == nullId {
-		entity.Id = uuid.Must(uuid.NewRandom())
-	}
-
-	r.data[entity.Id] = entity
-	return entity
+func (r *ArticleRepo) Save(article model.Article) model.Article {
+	r.data[article.Id] = article
+	return article
 }
 
 func (r *ArticleRepo) Delete(id uuid.UUID) model.Article {

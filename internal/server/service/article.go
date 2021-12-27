@@ -1,7 +1,6 @@
 package service
 
 import (
-	"encoding/json"
 	"weltraumschaf.de/battleship/internal/server/repo"
 
 	"github.com/google/uuid"
@@ -26,10 +25,12 @@ func (as *ArticleService) SingleArticle(id uuid.UUID) (model.Article, bool) {
 	return as.data.FindById(id)
 }
 
-func (as *ArticleService) CreateArticle(body []byte) model.Article {
-	var article model.Article
+var nullId = uuid.UUID{}
 
-	json.Unmarshal(body, &article)
+func (as *ArticleService) CreateArticle(article model.Article) model.Article {
+	if article.Id == nullId {
+		article.Id = uuid.Must(uuid.NewRandom())
+	}
 
 	return as.data.Save(article)
 }

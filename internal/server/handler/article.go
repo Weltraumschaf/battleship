@@ -6,6 +6,7 @@ import (
 	"github.com/gorilla/mux"
 	"io/ioutil"
 	"net/http"
+	"weltraumschaf.de/battleship/internal/server/model"
 	"weltraumschaf.de/battleship/internal/server/service"
 )
 
@@ -56,10 +57,22 @@ func (h *ArticleHandler) SingleArticle(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *ArticleHandler) CreateArticle(w http.ResponseWriter, r *http.Request) {
-	reqBody, _ := ioutil.ReadAll(r.Body)
-	err := json.NewEncoder(w).Encode(h.articles.CreateArticle(reqBody))
+	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		http.Error(w, "Can't encode data to JSON!", http.StatusInternalServerError)
+		http.Error(w, "Can't read request body!", http.StatusInternalServerError)
+		return
+	}
+
+	var article model.Article
+	err = json.Unmarshal(body, &article)
+	if err != nil {
+		http.Error(w, "Can't unmarshal request body to JSON!", http.StatusInternalServerError)
+		return
+	}
+
+	err = json.NewEncoder(w).Encode(h.articles.CreateArticle(article))
+	if err != nil {
+		http.Error(w, "Can't marshal data to JSON!", http.StatusInternalServerError)
 		return
 	}
 }
