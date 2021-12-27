@@ -20,7 +20,11 @@ func NewArticleHandler() *ArticleHandler {
 }
 
 func (h *ArticleHandler) AllArticles(w http.ResponseWriter, r *http.Request) {
-	json.NewEncoder(w).Encode(h.articles.ReturnAllArticles())
+	err := json.NewEncoder(w).Encode(h.articles.ReturnAllArticles())
+	if err != nil {
+		http.Error(w, "Can't encode data to JSON!", http.StatusInternalServerError)
+		return
+	}
 }
 
 func (h *ArticleHandler) SingleArticle(w http.ResponseWriter, r *http.Request) {
@@ -44,12 +48,20 @@ func (h *ArticleHandler) SingleArticle(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Not found", http.StatusNotFound)
 	}
 
-	json.NewEncoder(w).Encode(article)
+	err = json.NewEncoder(w).Encode(article)
+	if err != nil {
+		http.Error(w, "Can't encode data to JSON!", http.StatusInternalServerError)
+		return
+	}
 }
 
 func (h *ArticleHandler) CreateArticle(w http.ResponseWriter, r *http.Request) {
 	reqBody, _ := ioutil.ReadAll(r.Body)
-	json.NewEncoder(w).Encode(h.articles.CreateNewArticle(reqBody))
+	err := json.NewEncoder(w).Encode(h.articles.CreateNewArticle(reqBody))
+	if err != nil {
+		http.Error(w, "Can't encode data to JSON!", http.StatusInternalServerError)
+		return
+	}
 }
 
 func (h *ArticleHandler) DeleteArticle(w http.ResponseWriter, r *http.Request) {
@@ -67,7 +79,11 @@ func (h *ArticleHandler) DeleteArticle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	json.NewEncoder(w).Encode(h.articles.DeleteArticle(id))
+	err = json.NewEncoder(w).Encode(h.articles.DeleteArticle(id))
+	if err != nil {
+		http.Error(w, "Can't encode data to JSON!", http.StatusInternalServerError)
+		return
+	}
 }
 
 func (h *ArticleHandler) UpdateArticle(w http.ResponseWriter, r *http.Request) {
