@@ -28,11 +28,10 @@ func (as *ArticleService) ReturnSingleArticle(id uuid.UUID) (model.Article, bool
 
 func (as *ArticleService) CreateNewArticle(body []byte) model.Article {
 	var article model.Article
-	json.Unmarshal(body, &article)
-	article.Id = uuid.Must(uuid.NewRandom())
-	as.data.Save(article)
 
-	return article
+	json.Unmarshal(body, &article)
+
+	return as.data.Save(article)
 }
 
 func (as *ArticleService) DeleteArticle(id uuid.UUID) model.Article {
