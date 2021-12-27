@@ -31,8 +31,9 @@ func Execute(c *cli.Context) error {
 
 func registerArticleRoutes(r *mux.Router) {
 	h := handler.NewArticleHandler()
-	r.HandleFunc("/articles", h.ReturnAllArticles)
-	r.HandleFunc("/article", h.CreateNewArticle).Methods("POST")
-	r.HandleFunc("/article/{id}", h.ReturnSingleArticle)
+	r.HandleFunc("/articles", h.AllArticles)
+	r.HandleFunc("/article", h.CreateArticle).Methods("POST")
+	r.HandleFunc("/article/{id}", h.SingleArticle)
+	r.HandleFunc("/article/{id}", h.UpdateArticle).Methods("PUT")
 	r.HandleFunc("/article/{id}", h.DeleteArticle).Methods("DELETE")
 }

@@ -3,10 +3,10 @@ package handler
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
-	"net/http"
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
+	"io/ioutil"
+	"net/http"
 	"weltraumschaf.de/battleship/internal/server/service"
 )
 
@@ -20,12 +20,12 @@ func NewArticleHandler() *ArticleHandler {
 	}
 }
 
-func (h *ArticleHandler) ReturnAllArticles(w http.ResponseWriter, r *http.Request) {
+func (h *ArticleHandler) AllArticles(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Endpoint Hit: returnAllArticles")
 	json.NewEncoder(w).Encode(h.articles.ReturnAllArticles())
 }
 
-func (h *ArticleHandler) ReturnSingleArticle(w http.ResponseWriter, r *http.Request) {
+func (h *ArticleHandler) SingleArticle(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	literalId, ok := vars["id"]
 
@@ -43,7 +43,7 @@ func (h *ArticleHandler) ReturnSingleArticle(w http.ResponseWriter, r *http.Requ
 	json.NewEncoder(w).Encode(h.articles.ReturnSingleArticle(id))
 }
 
-func (h *ArticleHandler) CreateNewArticle(w http.ResponseWriter, r *http.Request) {
+func (h *ArticleHandler) CreateArticle(w http.ResponseWriter, r *http.Request) {
 	reqBody, _ := ioutil.ReadAll(r.Body)
 	json.NewEncoder(w).Encode(h.articles.CreateNewArticle(reqBody))
 }
@@ -64,4 +64,8 @@ func (h *ArticleHandler) DeleteArticle(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(h.articles.DeleteArticle(id))
+}
+
+func (h *ArticleHandler) UpdateArticle(w http.ResponseWriter, r *http.Request) {
+	panic("Not implemented!")
 }
