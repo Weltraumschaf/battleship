@@ -3,7 +3,6 @@ package server
 import (
 	"github.com/gorilla/mux"
 	"github.com/urfave/cli/v2"
-	"log"
 	"net/http"
 	"weltraumschaf.de/battleship/internal/server/handler"
 )
@@ -24,10 +23,10 @@ func Create() *cli.App {
 
 func Execute(c *cli.Context) error {
 	r := mux.NewRouter().StrictSlash(true)
-	registerArticleRoutes(r)
-	log.Fatal(http.ListenAndServe(":10000", r))
 
-	return nil
+	registerArticleRoutes(r)
+
+	return http.ListenAndServe(":10000", r)
 }
 
 func registerArticleRoutes(r *mux.Router) {
