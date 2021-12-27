@@ -2,7 +2,6 @@ package handler
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"io/ioutil"
@@ -21,7 +20,6 @@ func NewArticleHandler() *ArticleHandler {
 }
 
 func (h *ArticleHandler) AllArticles(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("Endpoint Hit: returnAllArticles")
 	json.NewEncoder(w).Encode(h.articles.ReturnAllArticles())
 }
 
