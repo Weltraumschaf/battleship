@@ -20,11 +20,6 @@ func NewArticleHandler() *ArticleHandler {
 	}
 }
 
-func (h *ArticleHandler) HomePage(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Welcome to the HomePage!")
-	fmt.Println("Endpoint Hit: homePage")
-}
-
 func (h *ArticleHandler) ReturnAllArticles(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("Endpoint Hit: returnAllArticles")
 	json.NewEncoder(w).Encode(h.articles.ReturnAllArticles())
