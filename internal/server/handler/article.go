@@ -20,7 +20,7 @@ func NewArticleHandler() *ArticleHandler {
 }
 
 func (h *ArticleHandler) AllArticles(w http.ResponseWriter, r *http.Request) {
-	err := json.NewEncoder(w).Encode(h.articles.ReturnAllArticles())
+	err := json.NewEncoder(w).Encode(h.articles.AllArticles())
 	if err != nil {
 		http.Error(w, "Can't encode data to JSON!", http.StatusInternalServerError)
 		return
@@ -42,7 +42,7 @@ func (h *ArticleHandler) SingleArticle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	article, exists := h.articles.ReturnSingleArticle(id)
+	article, exists := h.articles.SingleArticle(id)
 
 	if !exists {
 		http.Error(w, "Not found", http.StatusNotFound)
@@ -57,7 +57,7 @@ func (h *ArticleHandler) SingleArticle(w http.ResponseWriter, r *http.Request) {
 
 func (h *ArticleHandler) CreateArticle(w http.ResponseWriter, r *http.Request) {
 	reqBody, _ := ioutil.ReadAll(r.Body)
-	err := json.NewEncoder(w).Encode(h.articles.CreateNewArticle(reqBody))
+	err := json.NewEncoder(w).Encode(h.articles.CreateArticle(reqBody))
 	if err != nil {
 		http.Error(w, "Can't encode data to JSON!", http.StatusInternalServerError)
 		return

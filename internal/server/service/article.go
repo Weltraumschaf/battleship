@@ -18,15 +18,15 @@ func NewArticleService() *ArticleService {
 	}
 }
 
-func (as *ArticleService) ReturnAllArticles() []model.Article {
+func (as *ArticleService) AllArticles() []model.Article {
 	return as.data.FindAll()
 }
 
-func (as *ArticleService) ReturnSingleArticle(id uuid.UUID) (model.Article, bool) {
+func (as *ArticleService) SingleArticle(id uuid.UUID) (model.Article, bool) {
 	return as.data.FindById(id)
 }
 
-func (as *ArticleService) CreateNewArticle(body []byte) model.Article {
+func (as *ArticleService) CreateArticle(body []byte) model.Article {
 	var article model.Article
 
 	json.Unmarshal(body, &article)
