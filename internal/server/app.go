@@ -23,16 +23,18 @@ func Create() *cli.App {
 }
 
 func Execute(c *cli.Context) error {
-	h := handler.NewArticleHandler()
-
 	r := mux.NewRouter().StrictSlash(true)
+	registerArticleRoutes(r)
+	log.Fatal(http.ListenAndServe(":10000", r))
+
+	return nil
+}
+
+func registerArticleRoutes(r *mux.Router) {
+	h := handler.NewArticleHandler()
 	r.HandleFunc("/", h.HomePage)
 	r.HandleFunc("/articles", h.ReturnAllArticles)
 	r.HandleFunc("/article", h.CreateNewArticle).Methods("POST")
 	r.HandleFunc("/article/{id}", h.ReturnSingleArticle)
 	r.HandleFunc("/article/{id}", h.DeleteArticle).Methods("DELETE")
-
-	log.Fatal(http.ListenAndServe(":10000", r))
-
-	return nil
 }
