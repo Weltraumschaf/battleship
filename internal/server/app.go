@@ -3,7 +3,7 @@ package server
 import (
 	"github.com/urfave/cli/v2"
 	"net/http"
-	"weltraumschaf.de/battleship/internal/server/routes"
+	"weltraumschaf.de/battleship/internal/server/router"
 )
 
 func Create() *cli.App {
@@ -21,7 +21,7 @@ func Create() *cli.App {
 }
 
 func Execute(c *cli.Context) error {
-	r := routes.NewConfiguredRouter()
+	r := router.NewConfiguredRouter()
 
 	return http.ListenAndServe(":10000", r)
 }
