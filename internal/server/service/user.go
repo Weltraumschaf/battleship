@@ -20,3 +20,8 @@ func (s *UserService) AllUsers() []model.User {
 func (s *UserService) SingleUser(name string) (model.User, bool) {
 	return s.data.FindByName(name)
 }
+
+func (s *UserService) CreateUser(user model.User) model.User {
+	s.data.Save(user)
+	return user
+}

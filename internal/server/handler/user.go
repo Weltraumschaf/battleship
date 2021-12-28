@@ -47,9 +47,27 @@ func (h *UserHandler) SingleUser(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func (h *UserHandler) SingleUser(w http.ResponseWriter, r *http.Request) {
-	panic("Not implemented!")
+func (h *UserHandler) CreateUsers(w http.ResponseWriter, r *http.Request) {
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		http.Error(w, "can't read request body", http.StatusInternalServerError)
+		return
+	}
+
+	var user model.User
+	err = json.Unmarshal(body, &user)
+	if err != nil {
+		http.Error(w, "can't unmarshal request body to JSON", http.StatusInternalServerError)
+		return
+	}
+
+	err = json.NewEncoder(w).Encode(h.users.CreateUser(user))
+	if err != nil {
+		http.Error(w, "can't marshal data to JSON", http.StatusInternalServerError)
+		return
+	}
 }
+
 
 func (h *UserHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	panic("Not implemented!")
