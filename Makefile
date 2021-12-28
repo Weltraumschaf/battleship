@@ -11,18 +11,19 @@ BIN_DIR				= $(PROJECT_DIR)/bin
 
 .PHONY: clean ## Clean the project.
 clean:
-	@echo "Deleting files ..."
 	rm -rfv $(BIN_DIR)
 
 .PHONY: build
-build: ## Build the project
-	@echo "Building project ..."
+build: dependencies ## Build the project
 	mkdir -p $(BIN_DIR)
 	go build -o $(BIN_DIR)/battleship $(PROJECT_DIR)/cmd/battleship/main.go
 	go build -o $(BIN_DIR)/server $(PROJECT_DIR)/cmd/server/main.go
 
-	@echo "Done!"
-	@echo "Final binary is located in $(BIN_DIR)"
+	@echo "Done! Final binary is located in $(BIN_DIR)"
+
+.PHONY: dependencies
+dependencies: ## Get the Go dependencies
+	go get -t -d -v ./...
 
 .PHONY: run-battleship
 run-battleship: ## Run the project's scanner binary.
@@ -33,9 +34,20 @@ run-server: ## Run the project's scanner binary.
 	go run $(PROJECT_DIR)/cmd/server/main.go
 
 .PHONY: test
-test: build ## Run the unit tests.
-	@echo "Testing project ..."
+test: ## Run the unit tests.
 	go test -v ./...
+
+.PHONY: vet
+vet: ## Vet the project.
+	go vet -v ./...
+
+.PHONY: image
+image: ## Build the Docker image.
+	docker image build  -t "weltraumschaf/battleship:1.0.0" .
+
+.PHONY: run-container
+run-container: image ## Run the Docker container.
+	docker container run -p 10000:10000 weltraumschaf/battleship:1.0.0
 
 .PHONY: help
 help: ## Display this help screen
