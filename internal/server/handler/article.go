@@ -46,12 +46,13 @@ func (h *ArticleHandler) SingleArticle(w http.ResponseWriter, r *http.Request) {
 	article, exists := h.articles.SingleArticle(id)
 
 	if !exists {
-		http.Error(w, "Not found", http.StatusNotFound)
+		http.Error(w, "not found", http.StatusNotFound)
+		return
 	}
 
 	err = json.NewEncoder(w).Encode(article)
 	if err != nil {
-		http.Error(w, "Can't encode data to JSON!", http.StatusInternalServerError)
+		http.Error(w, "can't encode data to JSON", http.StatusInternalServerError)
 		return
 	}
 }
@@ -59,20 +60,20 @@ func (h *ArticleHandler) SingleArticle(w http.ResponseWriter, r *http.Request) {
 func (h *ArticleHandler) CreateArticle(w http.ResponseWriter, r *http.Request) {
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		http.Error(w, "Can't read request body!", http.StatusInternalServerError)
+		http.Error(w, "can't read request body", http.StatusInternalServerError)
 		return
 	}
 
 	var article model.Article
 	err = json.Unmarshal(body, &article)
 	if err != nil {
-		http.Error(w, "Can't unmarshal request body to JSON!", http.StatusInternalServerError)
+		http.Error(w, "can't unmarshal request body to JSON", http.StatusInternalServerError)
 		return
 	}
 
 	err = json.NewEncoder(w).Encode(h.articles.CreateArticle(article))
 	if err != nil {
-		http.Error(w, "Can't marshal data to JSON!", http.StatusInternalServerError)
+		http.Error(w, "can't marshal data to JSON", http.StatusInternalServerError)
 		return
 	}
 }
