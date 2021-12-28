@@ -1,6 +1,7 @@
 package service
 
 import (
+	"log"
 	"weltraumschaf.de/battleship/internal/server/repo"
 
 	"github.com/google/uuid"
@@ -37,4 +38,31 @@ func (as *ArticleService) CreateArticle(article model.Article) model.Article {
 
 func (as *ArticleService) DeleteArticle(id uuid.UUID) model.Article {
 	return as.data.Delete(id)
+}
+
+func (as *ArticleService) UpdateArticle(toUpdate model.Article) (model.Article, bool) {
+	log.Println("Update model: ", toUpdate)
+	persisted, exists := as.data.FindById(toUpdate.Id)
+
+	if !exists {
+		log.Println("No persistent data found!")
+		return model.Article{}, false
+	}
+
+	if toUpdate.Title != "" {
+		log.Println("Update title.")
+		persisted.Title = toUpdate.Title
+	}
+
+	if toUpdate.Description != "" {
+		log.Println("Update description.")
+		persisted.Description = toUpdate.Description
+	}
+
+	if toUpdate.Content != "" {
+		log.Println("Update content.")
+		persisted.Content = toUpdate.Content
+	}
+
+	return as.data.Save(persisted), true
 }
