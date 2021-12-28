@@ -15,22 +15,31 @@ func NewConfiguredRouter() *mux.Router {
 	return r
 }
 
+type httpMethod string
+
+const (
+	httpGet httpMethod = "GET"
+	httpPost = "POST"
+	httpPut = "PUT"
+	httpDelete = "DELETE"
+)
+
 func registerArticleRoutes(r *mux.Router) {
 	h := handler.NewArticleHandler()
-	r.HandleFunc("/articles", h.AllArticles)
-	r.HandleFunc("/article", h.CreateArticle).Methods("POST")
-	r.HandleFunc("/article/{id}", h.SingleArticle)
-	r.HandleFunc("/article/{id}", h.UpdateArticle).Methods("PUT")
-	r.HandleFunc("/article/{id}", h.DeleteArticle).Methods("DELETE")
+	r.HandleFunc("/articles", h.AllArticles).Methods(string(httpGet))
+	r.HandleFunc("/article", h.CreateArticle).Methods(string(httpPost))
+	r.HandleFunc("/article/{id}", h.SingleArticle).Methods(string(httpGet))
+	r.HandleFunc("/article/{id}", h.UpdateArticle).Methods(string(httpPut))
+	r.HandleFunc("/article/{id}", h.DeleteArticle).Methods(string(httpDelete))
 }
 
 func registerGameRoutes(r *mux.Router) {
 	h := handler.NewGameHandler()
-	r.HandleFunc("/games", h.AllGames)
+	r.HandleFunc("/games", h.AllGames).Methods(string(httpGet))
 }
 
 func registerUserRoutes(r *mux.Router) {
 	h := handler.NewUserHandler()
-	r.HandleFunc("/users", h.AllUsers)
+	r.HandleFunc("/users", h.AllUsers).Methods(string(httpGet))
 }
 
