@@ -104,7 +104,6 @@ func (h *ArticleHandler) UpdateArticle(w http.ResponseWriter, r *http.Request) {
 
 	article.Id = id
 	updated, exists := h.articles.UpdateArticle(article)
-
 	if !exists {
 		http.Error(w, "not found", http.StatusNotFound)
 		return

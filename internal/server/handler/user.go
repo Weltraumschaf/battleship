@@ -83,6 +83,36 @@ func (h *UserHandler) DeleteUser(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *UserHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
-	panic("Not implemented!")
+	name, err := retrievePathParameter(r, "name")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	var user model.User
+	err = json.Unmarshal(body, &user)
+	if err != nil {
+		http.Error(w, "can't unmarshal request body to JSON", http.StatusInternalServerError)
+		return
+	}
+
+	user.Name = name
+	updated, exists := h.users.UpdateUser(user)
+	if !exists {
+		http.Error(w, "not found", http.StatusNotFound)
+		return
+	}
+
+	err = json.NewEncoder(w).Encode(updated)
+	if err != nil {
+		http.Error(w, "can't encode data to JSON", http.StatusInternalServerError)
+		return
+	}
 }
 

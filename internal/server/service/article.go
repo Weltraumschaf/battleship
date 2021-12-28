@@ -45,7 +45,6 @@ func (s *ArticleService) DeleteArticle(id uuid.UUID) model.Article {
 func (s *ArticleService) UpdateArticle(toUpdate model.Article) (model.Article, bool) {
 	log.Println("Update model: ", toUpdate)
 	persisted, exists := s.data.FindById(toUpdate.Id)
-
 	if !exists {
 		log.Println("No persistent data found!")
 		return model.Article{}, false
