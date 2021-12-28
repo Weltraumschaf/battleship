@@ -3,8 +3,8 @@ FROM golang:1.17-bullseye as build
 
 WORKDIR /tmp/src
 ADD . /tmp/src
-RUN make
+RUN make CGO_ENABLED=0 build
 
-FROM gcr.io/distroless/base-debian11
+FROM gcr.io/distroless/static
 COPY --from=build /tmp/src/bin/server /
 CMD ["/server"]
