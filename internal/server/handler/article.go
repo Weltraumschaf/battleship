@@ -2,6 +2,7 @@ package handler
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"io/ioutil"
@@ -29,17 +30,9 @@ func (h *ArticleHandler) AllArticles(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *ArticleHandler) SingleArticle(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	literalId, ok := vars["id"]
-
-	if !ok {
-		http.Error(w, "Path parameter 'id' missing!", http.StatusBadRequest)
-		return
-	}
-
-	id, err := uuid.Parse(literalId)
+	id, err := retrieveId(r)
 	if err != nil {
-		http.Error(w, "Malformed parameter 'id'!", http.StatusBadRequest)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
@@ -79,27 +72,79 @@ func (h *ArticleHandler) CreateArticle(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *ArticleHandler) DeleteArticle(w http.ResponseWriter, r *http.Request) {
-	vars := mux.Vars(r)
-	literalId, ok := vars["id"]
-
-	if !ok {
-		http.Error(w, "Get parameter 'id' missing!", http.StatusBadRequest)
-		return
-	}
-
-	id, err := uuid.Parse(literalId)
+	id, err := retrieveId(r)
 	if err != nil {
-		http.Error(w, "Malformed parameter 'id'!", http.StatusBadRequest)
+		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
 	err = json.NewEncoder(w).Encode(h.articles.DeleteArticle(id))
 	if err != nil {
-		http.Error(w, "Can't encode data to JSON!", http.StatusInternalServerError)
+		http.Error(w, "can't encode data to JSON", http.StatusInternalServerError)
 		return
 	}
 }
 
 func (h *ArticleHandler) UpdateArticle(w http.ResponseWriter, r *http.Request) {
-	panic("Not implemented!")
+	id, err := retrieveId(r)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	var article model.Article
+	err = json.Unmarshal(body, &article)
+	if err != nil {
+		http.Error(w, "can't unmarshal request body to JSON", http.StatusInternalServerError)
+		return
+	}
+
+	article.Id = id
+	updated, exists := h.articles.UpdateArticle(article)
+
+	if !exists {
+		http.Error(w, "not found", http.StatusNotFound)
+		return
+	}
+
+	err = json.NewEncoder(w).Encode(updated)
+
+	if err != nil {
+		http.Error(w, "can't encode data to JSON", http.StatusInternalServerError)
+		return
+	}
+}
+
+func retrieveId(r *http.Request) (uuid.UUID, error) {
+	paramName := "id"
+	literalId, err := retrievePathParameter(r, paramName)
+
+	if err != nil {
+		return uuid.UUID{}, err
+	}
+
+	id, err := uuid.Parse(literalId)
+
+	if err != nil {
+		return uuid.UUID{}, fmt.Errorf("malformed UUID given for '%s'", paramName)
+	}
+
+	return id, nil
+}
+
+func retrievePathParameter(r *http.Request, name string) (string, error) {
+	vars := mux.Vars(r)
+	literal, ok := vars[name]
+
+	if ok {
+		return literal, nil
+	}
+
+	return "", fmt.Errorf("path parameter '%s' missing", name)
 }
