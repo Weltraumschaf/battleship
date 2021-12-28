@@ -18,31 +18,33 @@ func NewArticleService() *ArticleService {
 	}
 }
 
-func (as *ArticleService) AllArticles() []model.Article {
-	return as.data.FindAll()
+func (s *ArticleService) AllArticles() []model.Article {
+	return s.data.FindAll()
 }
 
-func (as *ArticleService) SingleArticle(id uuid.UUID) (model.Article, bool) {
-	return as.data.FindById(id)
+func (s *ArticleService) SingleArticle(id uuid.UUID) (model.Article, bool) {
+	return s.data.FindById(id)
 }
 
 var nullId = uuid.UUID{}
 
-func (as *ArticleService) CreateArticle(article model.Article) model.Article {
+func (s *ArticleService) CreateArticle(article model.Article) model.Article {
 	if article.Id == nullId {
 		article.Id = uuid.Must(uuid.NewRandom())
 	}
 
-	return as.data.Save(article)
+	s.data.Save(article)
+
+	return article
 }
 
-func (as *ArticleService) DeleteArticle(id uuid.UUID) model.Article {
-	return as.data.Delete(id)
+func (s *ArticleService) DeleteArticle(id uuid.UUID) model.Article {
+	return s.data.Delete(id)
 }
 
-func (as *ArticleService) UpdateArticle(toUpdate model.Article) (model.Article, bool) {
+func (s *ArticleService) UpdateArticle(toUpdate model.Article) (model.Article, bool) {
 	log.Println("Update model: ", toUpdate)
-	persisted, exists := as.data.FindById(toUpdate.Id)
+	persisted, exists := s.data.FindById(toUpdate.Id)
 
 	if !exists {
 		log.Println("No persistent data found!")
@@ -64,5 +66,6 @@ func (as *ArticleService) UpdateArticle(toUpdate model.Article) (model.Article, 
 		persisted.Content = toUpdate.Content
 	}
 
-	return as.data.Save(persisted), true
+	s.data.Save(persisted)
+	return persisted, true
 }

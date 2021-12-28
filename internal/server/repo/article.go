@@ -21,9 +21,8 @@ func NewArticleRepo() *ArticleRepo {
 	return r
 }
 
-func (r *ArticleRepo) Save(article model.Article) model.Article {
+func (r *ArticleRepo) Save(article model.Article)  {
 	r.data[article.Id] = article
-	return article
 }
 
 func (r *ArticleRepo) Delete(id uuid.UUID) model.Article {
