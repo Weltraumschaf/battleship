@@ -13,6 +13,10 @@ func NewUserService() *UserService {
 	return &UserService{}
 }
 
-func (s UserService) AllUsers() []model.User {
+func (s *UserService) AllUsers() []model.User {
 	return s.data.FindAll()
+}
+
+func (s *UserService) SingleUser(name string) (model.User, bool) {
+	return s.data.FindByName(name)
 }

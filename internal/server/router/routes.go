@@ -42,5 +42,6 @@ func registerUserRoutes(r *mux.Router) {
 	h := handler.NewUserHandler()
 	r.HandleFunc("/users", h.AllUsers).Methods(string(httpGet))
 	r.HandleFunc("/user", h.CreateUsers).Methods(string(httpPost))
+	r.HandleFunc("/user/{name}", h.SingleUser).Methods(string(httpGet))
 }
 
