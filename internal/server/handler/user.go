@@ -27,13 +27,13 @@ func (h *UserHandler) AllUsers(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *UserHandler) SingleUser(w http.ResponseWriter, r *http.Request) {
-	id, err := retrievePathParameter(r, "name")
+	name, err := retrievePathParameter(r, "name")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	article, exists := h.users.SingleUser(id)
+	article, exists := h.users.SingleUser(name)
 
 	if !exists {
 		http.Error(w, "not found", http.StatusNotFound)
@@ -68,11 +68,21 @@ func (h *UserHandler) CreateUsers(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func (h *UserHandler) DeleteUser(w http.ResponseWriter, r *http.Request) {
+	name, err := retrievePathParameter(r, "name")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	err = json.NewEncoder(w).Encode(h.users.DeleteUser(name))
+	if err != nil {
+		http.Error(w, "can't encode data to JSON", http.StatusInternalServerError)
+		return
+	}
+}
 
 func (h *UserHandler) UpdateUser(w http.ResponseWriter, r *http.Request) {
 	panic("Not implemented!")
 }
 
-func (h *UserHandler) DeleteUser(w http.ResponseWriter, r *http.Request) {
-	panic("Not implemented!")
-}

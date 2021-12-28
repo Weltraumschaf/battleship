@@ -25,3 +25,7 @@ func (s *UserService) CreateUser(user model.User) model.User {
 	s.data.Save(user)
 	return user
 }
+
+func (s *UserService) DeleteUser(name string) model.User {
+	return s.data.Delete(name)
+}
