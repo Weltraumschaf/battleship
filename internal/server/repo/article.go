@@ -2,7 +2,6 @@ package repo
 
 import (
 	"github.com/google/uuid"
-	"log"
 	"weltraumschaf.de/battleship/internal/server/model"
 )
 
@@ -23,7 +22,6 @@ func NewArticleRepo() *ArticleRepo {
 }
 
 func (r *ArticleRepo) Save(article model.Article) model.Article {
-	log.Println("Saving article for id", article.Id, "with data:", article)
 	r.data[article.Id] = article
 	return article
 }
